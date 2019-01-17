@@ -14,3 +14,8 @@ After cloning:
   
 - create 'survey_api' DB
   * also check in settings.py the DB credentials
+  
+  
+  Run Project : 
+  - python ./manage.py runserver
+  - go to http://localhost:8000/reports?accessToken=xxx
