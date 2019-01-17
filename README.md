@@ -19,3 +19,14 @@ After cloning:
   Run Project : 
   - python ./manage.py runserver
   - go to http://localhost:8000/reports?accessToken=xxx
+  - Example: 
+    query {
+        allQuestions(name: "FirstName") {
+            edges {
+              node {
+                id,
+                name
+              }
+            }
+        }
+    }
