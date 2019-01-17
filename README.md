@@ -10,3 +10,7 @@ After cloning:
       
 - install requirements : 
   * pip install -r requirements.txt
+  * if you add requirements update file by running "pip freeze > requirements.txt"
+  
+- create 'survey_api' DB
+  * also check in settings.py the DB credentials
