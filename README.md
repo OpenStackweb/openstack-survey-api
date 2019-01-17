@@ -5,8 +5,8 @@ After cloning:
 
 - create virtual environment :
   * on project root run : 
-      virtualenv venv
-      source venv/bin/activate
+      - virtualenv venv
+      - source venv/bin/activate
       
 - install requirements : 
   * pip install -r requirements.txt
