@@ -11,16 +11,18 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'm=u$$a9$9u8q4bn9668%iloz#d2dw8j4^3arr3^-o=yo_9+rnq'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -85,20 +87,20 @@ WSGI_APPLICATION = 'survey_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'survey_api',
-        'USER': 'root',
-        'PASSWORD': '30742023',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': os.getenv("DB_API_ENGINE"),
+        'NAME': os.getenv("DB_API_NAME"),
+        'USER': os.getenv("DB_API_USER"),
+        'PASSWORD': os.getenv("DB_API_PASSWORD"),
+        'HOST': os.getenv("DB_API_HOST"),
+        'PORT': os.getenv("DB_API_PORT"),
     },
     'openstack_db': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'openstack',
-        'USER': 'root',
-        'PASSWORD': '30742023',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': os.getenv("DB_OPENSTACK_ENGINE"),
+        'NAME': os.getenv("DB_OPENSTACK_ENGINE"),
+        'USER': os.getenv("DB_OPENSTACK_ENGINE"),
+        'PASSWORD': os.getenv("DB_OPENSTACK_ENGINE"),
+        'HOST': os.getenv("DB_OPENSTACK_ENGINE"),
+        'PORT': os.getenv("DB_OPENSTACK_ENGINE"),
     }
 }
 
@@ -178,5 +180,5 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 
 # OAUTH
-RS_CLIENT_ID = 'Qy0SGZk4RZiDJ1QvTG3mDXb4kFPwXuPf.openstack.client'
-RS_CLIENT_SECRET = 'FZ_Mk89_sqC7Lj0Dz6CxU14ziROogKe_46uSUMosBY-.jRBEMYtVk3tY~2bs9hMW'
+RS_CLIENT_ID = os.getenv("RS_CLIENT_ID"),
+RS_CLIENT_SECRET = os.getenv("RS_CLIENT_SECRET"),
