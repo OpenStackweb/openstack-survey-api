@@ -11,8 +11,17 @@
  * limitations under the License.
 """
 
-from django.apps import AppConfig
+from django.db import models
+from .survey_question_template import SurveyQuestionTemplate
 
 
-class ReportsConfig(AppConfig):
-    name = 'reports'
+class SurveyDropDownQuestionTemplate(SurveyQuestionTemplate):
+    is_multi_value = models.BooleanField(db_column='IsMultiSelect', default=0)
+    is_country_selector = models.BooleanField(db_column='IsCountrySelector', default=0)
+
+    surveyquestiontemplate_ptr = models.OneToOneField(
+        SurveyQuestionTemplate, on_delete=models.CASCADE, parent_link=True, db_column='ID')
+
+    class Meta:
+        app_label = 'reports'
+        db_table = 'SurveyDropDownQuestionTemplate'

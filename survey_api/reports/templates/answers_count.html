@@ -1,0 +1,12 @@
+
+{% block content %}
+    N: {{ total }} <br />
+
+    {% for item in answers %}
+        {{ item.value }} - {{ item.value_count }}<br />
+    {% endfor %}
+
+    {% for key, value in extra.items %}
+        {{ key }} - {{ value }}<br />
+    {% endfor %}
+{% endblock %}

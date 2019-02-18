@@ -11,18 +11,21 @@
  * limitations under the License.
 """
 
-from .survey_template import SurveyTemplate
-from .entity_survey_template import EntitySurveyTemplate
-from .survey_step_template import SurveyStepTemplate
+from django.db import models
 from .survey_question_template import SurveyQuestionTemplate
-from .survey_dropdown_question_template import SurveyDropDownQuestionTemplate
-from .survey_question_value_template import SurveyQuestionValueTemplate
-from .survey import Survey
-from .entity_survey import EntitySurvey
-from .survey_step import SurveyStep
-from .survey_answer import SurveyAnswer
-from .member import Member
-from .continent import Continent, ContinentCountries
-from .country import Country
 
-from .oauth_token import OAuthToken
+
+class SurveyQuestionValueTemplate(models.Model):
+    id = models.IntegerField(db_column='ID', primary_key=True)
+    value = models.TextField(db_column='Value')
+    label = models.TextField(db_column='Label')
+    order = models.IntegerField(db_column='Order')
+    question = models.ForeignKey(
+        SurveyQuestionTemplate, related_name='value_options', db_column='OwnerID', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.id
+
+    class Meta:
+        app_label = 'reports'
+        db_table = 'SurveyQuestionValueTemplate'

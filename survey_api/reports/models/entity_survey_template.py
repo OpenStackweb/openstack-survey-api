@@ -11,8 +11,16 @@
  * limitations under the License.
 """
 
-from django.apps import AppConfig
+from django.db import models
+from .survey_template import SurveyTemplate
 
+class EntitySurveyTemplate(SurveyTemplate):
+    name = models.TextField(db_column='Name')
+    parent_template = models.ForeignKey(
+        SurveyTemplate, related_name='entity_surveys', db_column='ParentID', on_delete=models.CASCADE)
+    surveytemplate_ptr = models.OneToOneField(
+        SurveyTemplate, on_delete=models.CASCADE, parent_link=True, db_column='ID')
 
-class ReportsConfig(AppConfig):
-    name = 'reports'
+    class Meta:
+        app_label = 'reports'
+        db_table = 'EntitySurveyTemplate'

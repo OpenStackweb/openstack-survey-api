@@ -1,0 +1,15 @@
+
+{% block content %}
+    <ul>
+    {% for item in answers %}
+        <li>
+            {{ item.value }}
+            <ul>
+                {% for survey in item.surveys %}
+                    <li>{{ survey.name }} - {{ survey.id }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

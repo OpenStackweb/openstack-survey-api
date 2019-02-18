@@ -12,24 +12,22 @@
 """
 
 from django.db import models
-import time
 
 
-class OAuthToken(models.Model):
-    token = models.TextField(null=True)
-    scopes = models.TextField()
-    expiration_date = models.IntegerField()
+class SurveyTemplate(models.Model):
+    id = models.IntegerField(db_column='ID', primary_key=True)
+    class_name = models.CharField(db_column='ClassName', max_length=50)
+    title = models.TextField(db_column='Title')
+    start_date = models.DateField(db_column='StartDate')
+    end_date = models.DateField(db_column='EndDate')
+    enabled = models.BooleanField(db_column='Enabled')
 
     def __str__(self):
-        return self.token
+        return self.id
 
-    @classmethod
-    def create(cls, token_info):
-        expiration = time.time() + token_info['expires_in']
-        token = cls(token=token_info['access_token'], scopes=token_info['scope'], expiration_date=expiration)
-        # do something with the token
-        return token
+    def is_deployment(self):
+        return self.class_name == 'EntitySurveyTemplate'
 
     class Meta:
-        app_label = 'auth'
-        db_table = 'OAuthToken'
+        app_label = 'reports'
+        db_table = 'SurveyTemplate'

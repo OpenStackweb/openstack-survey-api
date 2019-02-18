@@ -11,8 +11,19 @@
  * limitations under the License.
 """
 
-from django.apps import AppConfig
+from django.db import models
+from .survey_template import SurveyTemplate
 
 
-class ReportsConfig(AppConfig):
-    name = 'reports'
+class SurveyStepTemplate(models.Model):
+    id = models.IntegerField(db_column='ID', primary_key=True)
+    name = models.TextField(db_column='Name')
+    survey_template = models.ForeignKey(
+        SurveyTemplate, related_name='steps', db_column='SurveyTemplateID', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.id
+
+    class Meta:
+        app_label = 'reports'
+        db_table = 'SurveyStepTemplate'

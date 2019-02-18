@@ -12,24 +12,21 @@
 """
 
 from django.db import models
-import time
+from .survey import Survey
 
 
-class OAuthToken(models.Model):
-    token = models.TextField(null=True)
-    scopes = models.TextField()
-    expiration_date = models.IntegerField()
+class EntitySurvey(Survey):
+    parent_survey = models.ForeignKey(
+        Survey, related_name='entity_surveys', db_column='ParentID', on_delete=models.CASCADE)
+    survey_ptr = models.OneToOneField(
+        Survey, on_delete=models.CASCADE, parent_link=True, db_column='ID')
 
-    def __str__(self):
-        return self.token
+    def get_country(self):
+        return self.parent_survey.get_country(self.parent_survey)
 
-    @classmethod
-    def create(cls, token_info):
-        expiration = time.time() + token_info['expires_in']
-        token = cls(token=token_info['access_token'], scopes=token_info['scope'], expiration_date=expiration)
-        # do something with the token
-        return token
+    def get_continent(self):
+        return self.parent_survey.get_continent(self.parent_survey)
 
     class Meta:
-        app_label = 'auth'
-        db_table = 'OAuthToken'
+        app_label = 'reports'
+        db_table = 'EntitySurvey'

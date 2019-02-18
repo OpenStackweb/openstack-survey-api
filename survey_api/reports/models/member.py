@@ -11,8 +11,20 @@
  * limitations under the License.
 """
 
-from django.apps import AppConfig
+from django.db import models
 
 
-class ReportsConfig(AppConfig):
-    name = 'reports'
+class Member(models.Model):
+    id = models.IntegerField(db_column='ID', primary_key=True)
+    first_name = models.TextField(db_column='FirstName')
+    last_name = models.TextField(db_column='Surname')
+
+    def __str__(self):
+        return self.id
+
+    def full_name(self):
+        return self.first_name + ' ' + self.last_name
+
+    class Meta:
+        app_label = 'reports'
+        db_table = 'Member'

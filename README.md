@@ -18,7 +18,7 @@ After cloning:
   
   Run Project : 
   - python ./manage.py runserver
-  - go to http://localhost:8000/reports?accessToken=xxx
+  - go to http://localhost:8000/reports?access_token=xxx
   - Example: 
     query {
         allQuestions(name: "FirstName") {

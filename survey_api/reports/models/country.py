@@ -11,8 +11,16 @@
  * limitations under the License.
 """
 
-from django.apps import AppConfig
+from django.db import models
 
 
-class ReportsConfig(AppConfig):
-    name = 'reports'
+class Country(models.Model):
+    name = models.CharField(db_column='Name', max_length=50)
+    code = models.CharField(db_column='Code', max_length=50, primary_key=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        app_label = 'reports'
+        db_table = 'Countries'
