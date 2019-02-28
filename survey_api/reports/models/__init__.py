@@ -25,4 +25,4 @@ from .member import Member
 from .continent import Continent, ContinentCountries
 from .country import Country
 
-from .oauth_token import OAuthToken
+# from .oauth_token import OAuthToken

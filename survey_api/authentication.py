@@ -14,7 +14,7 @@
 
 from django.http import HttpResponseForbidden, HttpResponse
 from django.conf import settings
-from survey_api.reports.models import OAuthToken
+# from survey_api.reports.models import OAuthToken
 import requests, logging, time
 
 
@@ -25,7 +25,7 @@ class TokenValidationMiddleware(object):
     def __call__(self, request):
 
         # skip auth
-        return self.get_response(request)
+        # return self.get_response(request)
 
         if not 'access_token' in request.GET :
             return HttpResponseForbidden()
@@ -38,13 +38,13 @@ class TokenValidationMiddleware(object):
 
 
         # try get access_token from DB and check if not expired
-        db_access_token = OAuthToken.objects.filter(token = access_token).first()
-
-        if db_access_token is not None :
-            if db_access_token.expiration_date > time.time() :
-                return self.get_response(request)
-            else :
-                db_access_token.delete()
+        # db_access_token = OAuthToken.objects.filter(token = access_token).first()
+        #
+        # if db_access_token is not None :
+        #     if db_access_token.expiration_date > time.time() :
+        #         return self.get_response(request)
+        #     else :
+        #         db_access_token.delete()
 
 
         # Token instrospection
@@ -58,8 +58,8 @@ class TokenValidationMiddleware(object):
 
         if response.status_code == requests.codes.ok :
             token_info = response.json()
-            new_token = OAuthToken.create(token_info)
-            new_token.save()
+            # new_token = OAuthToken.create(token_info)
+            # new_token.save()
         else :
             logging.getLogger('django').error('INVALID TOKEN')
             return HttpResponseForbidden()
