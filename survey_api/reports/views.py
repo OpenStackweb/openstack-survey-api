@@ -9,32 +9,45 @@ from django.db import models
 # Create your views here.
 
 def answer_count(request):
-    items = process_answer_count(request)
+    result = process_answer_count(request)
 
     # html answer
     #return render(request, 'answers_count.html', {'answers':items.get('items'), 'total': items.get('total')})
 
     #json answer
-    data = json.dumps(items, indent=2)
+    data = json.dumps(result, indent=2)
     return http.HttpResponse(data, content_type="application/json")
 
+
+def answer_percentage(request):
+    result = process_answer_count(request)
+    items = result.get('items')
+    total = result.get('total')
+
+    for item in items:
+        percentage = round((int(item.get('value_count')) / total) * 100, 2)
+        item['value_count'] = percentage
+
+    #json answer
+    data = json.dumps(result, indent=2)
+    return http.HttpResponse(data, content_type="application/json")
 
 
 def answer_list(request):
-    items = process_answer_list(request)
-
-    #html answer
-    #return render(request, 'answers_list.html', {'answers':items.get('items'), 'total': items.get('total')})
+    result = process_answer_list(request)
 
     # json answer
-    data = json.dumps(items, indent=2)
+    data = json.dumps(result, indent=2)
     return http.HttpResponse(data, content_type="application/json")
 
 def nps(request):
-    items = process_answer_count(request)
+    name = request.GET.get('name', 'nps')
+    result = process_answer_count(request)
+    items = result.get('items');
+    total = result.get('total');
     nps = {'D': 0, 'N': 0, 'P': 0, 'NPS': 0}
 
-    for item in items.get('items'):
+    for item in items:
         value = int(item.get('value'))
         value_count = int(item.get('value_count'))
 
@@ -45,25 +58,24 @@ def nps(request):
         else :
             nps['P'] += value_count
 
-    nps['D'] = round((nps['D']/items.get('total')) * 100)
-    nps['N'] = round((nps['N']/items.get('total')) * 100)
-    nps['P'] = round((nps['P']/items.get('total')) * 100)
+    nps['D'] = round((nps['D']/total) * 100)
+    nps['N'] = round((nps['N']/total) * 100)
+    nps['P'] = round((nps['P']/total) * 100)
     nps['NPS'] = nps['P'] - nps['D']
     nps['D'] = str(nps['D']) + '%'
     nps['N'] = str(nps['N']) + '%'
     nps['P'] = str(nps['P']) + '%'
 
-    items['extra'] = nps
-
-    # html answer
-    #return render(request, 'answers_count.html', {'answers':items.get('items'), 'total': items.get('total'), 'extra': nps})
+    result['extra'] = nps
+    result['name'] = name
 
     #json answer
-    data = json.dumps(items, indent=2)
+    data = json.dumps(result, indent=2)
     return http.HttpResponse(data, content_type="application/json")
 
 
 def process_answer_count(request):
+    name = request.GET.get('name', 'data')
     question_name = request.GET.get('question', '')
     template_id = request.GET.get('template', '')
     order = request.GET.get('order', 'count')
@@ -114,14 +126,15 @@ def process_answer_count(request):
                 items = sorted(items, key=lambda item: item.get('order'))
 
     if order == 'count':
-        items = sorted(items, key=lambda item: item['value_count'])
+        items = sorted(items, key=lambda item: item['value_count'], reverse=True)
     elif order == 'value':
         items = sorted(items, key=lambda item: item['value'])
 
-    return {'items': items, 'total': total_count}
+    return {'name': name, 'items': items, 'total': total_count}
 
 
 def process_answer_list(request):
+    name = request.GET.get('name', 'data')
     question_name = request.GET.get('question', '')
     template_id = request.GET.get('template', '')
     order = request.GET.get('order', 'value_order')
@@ -192,13 +205,13 @@ def process_answer_list(request):
     if order == 'value_order':
         items = sorted(items, key=lambda item: item['order'])
     else:
-        items = sorted(items, key=lambda item: item['value'])
+        items = sorted(items, key=lambda item: item['value'], reverse=True)
 
     # order each bundle by survey id
     for item in items:
         item['surveys'] = sorted(item['surveys'], key=lambda survey: survey['id'])
 
-    return {'items': items, 'total': total_count}
+    return {'name': name, 'items': items, 'total': total_count}
 
 
 def get_raw_data(request):

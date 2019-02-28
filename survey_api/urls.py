@@ -40,6 +40,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('reports', GraphQLView.as_view(graphiql=True)),
     path('answers/count', views.answer_count),
+    path('answers/percentage', views.answer_percentage),
     path('answers/list', views.answer_list),
     path('answers/nps', views.nps)
 ]
