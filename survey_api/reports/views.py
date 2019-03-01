@@ -97,22 +97,27 @@ def process_answer_count(request):
             for single_value in obj.value.split(','):
                 if value_is_id:
                     if question.is_double_entry():
+                        single_key = single_value
                         single_values = single_value.split(':')
                         first_value = value_templates.get(int(single_values[0])).get('value')
                         second_value = value_templates.get(int(single_values[1])).get('value')
 
                         single_value = first_value + '/' + second_value
                     else:
+                        single_key = single_value
                         single_value = value_templates.get(int(single_value)).get('value')
+                else:
+                    single_key = single_value
 
-                if single_value not in single_objects:
-                    single_objects[single_value] = dict()
-                    single_objects[single_value]['value_count'] = 0
 
-                single_objects[single_value]['value'] = single_value
-                single_objects[single_value]['value_count'] += 1
+                if single_key not in single_objects:
+                    single_objects[single_key] = dict()
+                    single_objects[single_key]['value_count'] = 0
 
-        list(single_objects.values())
+                single_objects[single_key]['value'] = single_value
+                single_objects[single_key]['value_count'] += 1
+
+        items = list(single_objects.values())
     else:
         items = items.values('value').annotate(value_count=models.Count('step__survey'))
 
@@ -125,10 +130,12 @@ def process_answer_count(request):
             if order == 'value_order':
                 items = sorted(items, key=lambda item: item.get('order'))
 
+
     if order == 'count':
         items = sorted(items, key=lambda item: item['value_count'], reverse=True)
     elif order == 'value':
         items = sorted(items, key=lambda item: item['value'])
+
 
     return {'name': name, 'items': items, 'total': total_count}
 

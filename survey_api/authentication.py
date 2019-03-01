@@ -49,12 +49,10 @@ class TokenValidationMiddleware(object):
 
         # Token instrospection
         response = requests.post(
-            'https://testopenstackid.openstack.org/oauth2/token/introspection',
+            settings.IDP_BASE_URL + '/oauth2/token/introspection',
             auth=(settings.RS_CLIENT_ID,settings.RS_CLIENT_SECRET),
             params={'token' : access_token}
         )
-
-        #print(response.text)
 
         if response.status_code == requests.codes.ok :
             token_info = response.json()
