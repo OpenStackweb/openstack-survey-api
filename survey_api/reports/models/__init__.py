@@ -24,5 +24,3 @@ from .survey_answer import SurveyAnswer
 from .member import Member
 from .continent import Continent, ContinentCountries
 from .country import Country
-
-# from .oauth_token import OAuthToken

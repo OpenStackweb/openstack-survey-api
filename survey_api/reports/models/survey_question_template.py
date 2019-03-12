@@ -19,6 +19,7 @@ class SurveyQuestionTemplate(models.Model):
     id = models.IntegerField(db_column='ID', primary_key=True)
     class_name = models.CharField(db_column='ClassName', max_length=50, null=True)
     name = models.TextField(db_column='Name')
+    label = models.TextField(db_column='Label')
     is_mandatory = models.BooleanField(db_column='Mandatory')
     step_template = models.ForeignKey(
         SurveyStepTemplate, related_name='questions', db_column='StepID', on_delete=models.CASCADE)

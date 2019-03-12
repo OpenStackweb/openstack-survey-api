@@ -18,6 +18,7 @@ class Member(models.Model):
     id = models.IntegerField(db_column='ID', primary_key=True)
     first_name = models.TextField(db_column='FirstName')
     last_name = models.TextField(db_column='Surname')
+    email = models.EmailField(db_column='Email')
 
     def __str__(self):
         return self.id

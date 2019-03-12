@@ -11,20 +11,4 @@
  * limitations under the License.
 """
 
-from django.db import models
-from .survey_template import SurveyTemplate
-
-
-class SurveyStepTemplate(models.Model):
-    id = models.IntegerField(db_column='ID', primary_key=True)
-    name = models.TextField(db_column='Name')
-    friendly_name = models.TextField(db_column='FriendlyName')
-    survey_template = models.ForeignKey(
-        SurveyTemplate, related_name='steps', db_column='SurveyTemplateID', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.id
-
-    class Meta:
-        app_label = 'reports'
-        db_table = 'SurveyStepTemplate'
+from .survey_serializer import SurveySerializer

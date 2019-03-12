@@ -24,16 +24,18 @@ from functools import reduce
 class SurveyAnswerManager(models.Manager):
     use_for_related_fields = True
 
-    def get_queryset(self):
-        return super(SurveyAnswerManager, self).get_queryset().filter(step__survey__is_test=0)
-
     def with_deployment(self):
         deployment_filter = SurveyAnswer.objects.filter(step__survey__entitysurvey__parent_survey_id=OuterRef('step__survey_id'), question__is_mandatory=1)
-        return self.get_queryset().annotate(has_deployment=Exists(deployment_filter)).filter(has_deployment=True)
+        return self.get_queryset().annotate(has_deployment=Exists(deployment_filter))\
+            .filter(has_deployment=True, step__survey__is_test=0)
 
     def with_mandatory_answers(self):
         mandatory_filter = SurveyAnswer.objects.filter(step__survey_id=OuterRef('step__survey_id'), question__is_mandatory=1)
-        return self.get_queryset().annotate(has_mandatory=Exists(mandatory_filter)).filter(has_mandatory=True)
+        return self.get_queryset().annotate(has_mandatory=Exists(mandatory_filter))\
+            .filter(has_mandatory=True, step__survey__entitysurvey__parent_survey__is_test=0)
+
+
+
 
 class SurveyAnswer(models.Model):
     id = models.IntegerField(db_column='ID', primary_key=True)
@@ -51,6 +53,7 @@ class SurveyAnswer(models.Model):
     class Meta:
         app_label = 'reports'
         db_table = 'SurveyAnswer'
+
 
 
 
@@ -94,26 +97,33 @@ class SurveyAnswerFilter(django_filters.FilterSet):
 
     def answer_filter(self, queryset, name, value):
         filter_value = value.split(',')
-        question = filter_value[0]
-        answer = filter_value[1]
+        question_name = filter_value[0]
+        answer_value = filter_value[1]
+        template_id = self.data.get('template')
+
+        question = SurveyQuestionTemplate.objects.get(step_template__survey_template_id=template_id, name=question_name)
+        answer = SurveyQuestionValueTemplate.objects.get(question_id=question.id, value=answer_value)
 
         answer_exists = SurveyAnswer.objects \
-            .filter(step__survey_id=OuterRef('step__survey_id'), question_id=question) \
-            .extra(where=['FIND_IN_SET(%s, Value) > 0'], params=[str(answer)])
+            .filter(step__survey_id=OuterRef('step__survey_id'), question_id=question.id) \
+            .extra(where=['FIND_IN_SET(%s, Value) > 0'], params=[str(answer.id)])
 
         queryset = queryset.annotate(answer_filter=Exists(answer_exists)).filter(answer_filter=True)
         return queryset
 
     def answer_filter_gt(self, queryset, name, value):
         filter_value = value.split(',')
-        question = filter_value[0]
-        answer = filter_value[1]
+        question_name = filter_value[0]
+        answer_value = filter_value[1]
+        template_id = self.data.get('template')
 
-        answer_filter = SurveyQuestionValueTemplate.objects.get(id=answer)
-        answer_options = list(SurveyQuestionValueTemplate.objects.filter(question_id=question, order__gt=answer_filter.order).order_by('order').values_list('id', flat=True))
+        question = SurveyQuestionTemplate.objects.get(step_template__survey_template_id=template_id, name=question_name)
+        answer_filter = SurveyQuestionValueTemplate.objects.get(question_id=question.id, value=answer_value)
+
+        answer_options = list(SurveyQuestionValueTemplate.objects.filter(question_id=question.id, order__gt=answer_filter.order).order_by('order').values_list('id', flat=True))
 
         answer_exists = SurveyAnswer.objects \
-            .filter(step__survey_id=OuterRef('step__survey_id'), question_id=question) \
+            .filter(step__survey_id=OuterRef('step__survey_id'), question_id=question.id) \
             .filter(reduce(lambda x, y: x | y, [Q(value=item) for item in answer_options]))
 
         queryset = queryset.annotate(answer_filter=Exists(answer_exists)).filter(answer_filter=True)
