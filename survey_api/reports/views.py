@@ -223,8 +223,10 @@ def process_answer_list(request):
 
                 try:
                     owner = obj.step.survey.owner.full_name()
+                    owner_email = obj.step.survey.owner.email
                 except Member.DoesNotExist:
                     owner = obj.step.survey.owner_id
+                    owner_email = 'N/a'
 
                 survey = obj.step.survey
                 parent_survey_id = survey.id if not template.is_deployment() else survey.entitysurvey.parent_survey_id
@@ -235,7 +237,7 @@ def process_answer_list(request):
                     company = 'N/A'
 
                 single_objects[single_value]['value'] = single_value
-                single_objects[single_value]['surveys'].append({'name': owner, 'id': survey.id, 'company': company})
+                single_objects[single_value]['surveys'].append({'name': owner, 'email': owner_email, 'id': survey.id, 'company': company})
 
         items = list(single_objects.values())
     else:
@@ -258,8 +260,10 @@ def process_answer_list(request):
 
                 try:
                     owner = obj.step.survey.owner.full_name()
+                    owner_email = obj.step.survey.owner.email
                 except Member.DoesNotExist:
                     owner = obj.step.survey.owner_id
+                    owner_email = 'N/a'
 
                 survey = obj.step.survey
                 parent_survey = survey if not template.is_deployment() else survey.entitysurvey.parent_survey
@@ -269,7 +273,7 @@ def process_answer_list(request):
                 except SurveyAnswer.DoesNotExist:
                     company = 'N/A'
 
-                answer_list[the_value]['surveys'].append({'name': owner, 'id': survey.id, 'company': company})
+                answer_list[the_value]['surveys'].append({'name': owner, 'email': owner_email, 'id': survey.id, 'company': company})
 
         items = list(answer_list.values())
 
