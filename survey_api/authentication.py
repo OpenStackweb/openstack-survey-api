@@ -38,10 +38,10 @@ class TokenValidationMiddleware(object):
 
 
         # try get access_token from DB and check if not expired
-        # cache_access_token = cache.get('token')
+        cache_access_token = cache.get('token')
 
-        # if cache_access_token is not None :
-        #   return self.get_response(request)
+        if cache_access_token is not None :
+            return self.get_response(request)
 
 
         # Token instrospection
@@ -54,7 +54,7 @@ class TokenValidationMiddleware(object):
         if response.status_code == requests.codes.ok :
             token_info = response.json()
             # print(token_info)
-            # cache.set("token", token_info, timeout=token_info['expires_in'])
+            cache.set("token", token_info, timeout=token_info['expires_in'])
         else :
             logging.getLogger('django').error('INVALID TOKEN')
             return HttpResponseForbidden()
