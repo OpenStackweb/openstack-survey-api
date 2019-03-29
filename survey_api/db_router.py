@@ -30,7 +30,7 @@ class DBRouter(object):
         Attempts to write reports models go to openstack_db.
         """
         if model._meta.app_label == 'reports':
-            return 'openstack_db'
+            return None
         return 'default'
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):

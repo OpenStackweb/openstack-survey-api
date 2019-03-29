@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from survey_api.reports.models import Survey, SurveyStep, SurveyStepTemplate, SurveyAnswer, SurveyQuestionTemplate, SurveyQuestionValueTemplate, Member
+from survey_api.reports.models import \
+    Survey, SurveyStep, SurveyStepTemplate, SurveyAnswer, SurveyQuestionTemplate, SurveyQuestionValueTemplate, Member, SurveyTemplate, EntitySurveyTemplate
 
 
 class MemberSerializer(serializers.ModelSerializer):
@@ -57,6 +58,18 @@ class StepSerializer(serializers.ModelSerializer):
         if data['answers'].count == 0:
             raise serializers.ValidationError("must have answers")
         return data
+
+class EntitySurveyTemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EntitySurveyTemplate
+        fields = ['id', 'title']
+
+class SurveyTemplateSerializer(serializers.ModelSerializer):
+    entity_surveys = EntitySurveyTemplateSerializer(many=True, required=False)
+
+    class Meta:
+        model = SurveyTemplate
+        fields = ['id','title','start_date','end_date','entity_surveys']
 
 
 class EntitySurveySerializer(serializers.ModelSerializer):

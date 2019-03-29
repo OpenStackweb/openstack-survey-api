@@ -39,6 +39,7 @@ from survey_api.reports import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('reports', GraphQLView.as_view(graphiql=True)),
+    path('survey-templates', views.get_survey_templates),
     path('survey/<int:survey_id>', views.get_survey_data),
     path('answers/count', views.answer_count),
     path('answers/percentage', views.answer_percentage),

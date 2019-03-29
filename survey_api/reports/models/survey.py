@@ -30,6 +30,7 @@ class Survey(models.Model):
     state = models.CharField(db_column='State', max_length=50)
     lang = models.CharField(db_column='Lang', max_length=10)
     last_edited = models.DateTimeField(db_column='LastEdited')
+
     survey_template = models.ForeignKey(
         SurveyTemplate, related_name='surveys', db_column='TemplateID', on_delete=models.CASCADE)
     owner = models.ForeignKey(

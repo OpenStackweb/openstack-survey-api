@@ -4,7 +4,7 @@ import json
 from survey_api.reports.models.survey_answer import SurveyAnswer, SurveyAnswerFilter
 from survey_api.reports.models import SurveyTemplate, SurveyQuestionTemplate, Member, Continent, Survey
 from django.db import models
-from survey_api.reports.serializers import SurveySerializer
+from survey_api.reports.serializers import SurveySerializer, SurveyTemplateSerializer
 
 # Create your views here.
 
@@ -15,6 +15,15 @@ def get_survey_data(request, survey_id):
         survey = survey.entitysurvey.parent_survey
 
     json_result = SurveySerializer(survey).data
+    data = json.dumps(json_result, indent=2)
+
+    return http.HttpResponse(data, content_type="application/json")
+
+
+def get_survey_templates(request):
+    templates = SurveyTemplate.objects.all().filter(class_name='SurveyTemplate')
+
+    json_result = SurveyTemplateSerializer(templates, many=True).data
     data = json.dumps(json_result, indent=2)
 
     return http.HttpResponse(data, content_type="application/json")
@@ -51,6 +60,19 @@ def answer_list(request):
 def nps(request):
     name = request.GET.get('name', 'nps')
     result = process_answer_count(request)
+    items_result = [
+        {'value': '0', 'value_count': 0},
+        {'value': '1', 'value_count': 0},
+        {'value': '2', 'value_count': 0},
+        {'value': '3', 'value_count': 0},
+        {'value': '4', 'value_count': 0},
+        {'value': '5', 'value_count': 0},
+        {'value': '6', 'value_count': 0},
+        {'value': '7', 'value_count': 0},
+        {'value': '8', 'value_count': 0},
+        {'value': '9', 'value_count': 0},
+        {'value': '10', 'value_count': 0},
+    ]
     items = result.get('items');
     total = result.get('total');
     nps = {'D': 0, 'N': 0, 'P': 0, 'NPS': 0}
@@ -58,6 +80,7 @@ def nps(request):
     for item in items:
         value = int(item.get('value'))
         value_count = int(item.get('value_count'))
+        items_result[value]['value_count'] = value_count
 
         if 0 <= value <= 6 :
             nps['D'] += value_count
@@ -74,6 +97,7 @@ def nps(request):
     nps['N'] = str(nps['N']) + '%'
     nps['P'] = str(nps['P']) + '%'
 
+    result['items'] = items_result
     result['extra'] = nps
     result['name'] = name
 

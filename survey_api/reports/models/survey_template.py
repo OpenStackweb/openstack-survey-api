@@ -18,8 +18,8 @@ class SurveyTemplate(models.Model):
     id = models.IntegerField(db_column='ID', primary_key=True)
     class_name = models.CharField(db_column='ClassName', max_length=50)
     title = models.TextField(db_column='Title')
-    start_date = models.DateField(db_column='StartDate')
-    end_date = models.DateField(db_column='EndDate')
+    start_date = models.DateTimeField(db_column='StartDate')
+    end_date = models.DateTimeField(db_column='EndDate')
     enabled = models.BooleanField(db_column='Enabled')
 
     def __str__(self):

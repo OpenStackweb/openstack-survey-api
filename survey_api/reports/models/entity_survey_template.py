@@ -15,7 +15,6 @@ from django.db import models
 from .survey_template import SurveyTemplate
 
 class EntitySurveyTemplate(SurveyTemplate):
-    name = models.TextField(db_column='Name')
     parent_template = models.ForeignKey(
         SurveyTemplate, related_name='entity_surveys', db_column='ParentID', on_delete=models.CASCADE)
     surveytemplate_ptr = models.OneToOneField(
