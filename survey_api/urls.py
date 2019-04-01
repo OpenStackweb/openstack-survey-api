@@ -30,14 +30,12 @@ Including another URLconf
 """
 
 
-from django.contrib import admin
 from django.urls import path
 from graphene_django.views import GraphQLView
 
 from survey_api.reports import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('reports', GraphQLView.as_view(graphiql=True)),
     path('survey-templates', views.get_survey_templates),
     path('survey/<int:survey_id>', views.get_survey_data),
