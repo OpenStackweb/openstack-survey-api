@@ -314,13 +314,18 @@ def process_answer_list(request):
 
 
 def get_raw_data(request):
+    all_surveys = (request.GET.get('all_surveys', '') == '1')
     template_id = request.GET.get('template', '')
     template = SurveyTemplate.objects.get(id=template_id)
 
-    if template.is_deployment():
-        f = SurveyAnswerFilter(request.GET, queryset=SurveyAnswer.objects.with_mandatory_answers())
+    if all_surveys:
+        f = SurveyAnswerFilter(request.GET, queryset=SurveyAnswer.objects.all())
     else:
-        f = SurveyAnswerFilter(request.GET, queryset=SurveyAnswer.objects.with_deployment())
+        if template.is_deployment():
+            f = SurveyAnswerFilter(request.GET, queryset=SurveyAnswer.objects.with_mandatory_answers())
+        else:
+            f = SurveyAnswerFilter(request.GET, queryset=SurveyAnswer.objects.with_deployment())
+
 
     return f.qs
 
